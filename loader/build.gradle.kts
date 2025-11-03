@@ -35,7 +35,10 @@ val defaultCFlags = arrayOf(
 )
 
 val releaseFlags = arrayOf(
-    "-Ofast", "-flto=thin",
+    "-O3", "-flto=thin",
+    "-mllvm","--enable-constraint-elimination=true",
+    "-mllvm","--extra-vectorizer-passes=true",
+    "-mllvm","--enable-loopinterchange=true",
     "-Wno-unused", "-Wno-unused-parameter",
     "-fvisibility=hidden", "-fvisibility-inlines-hidden",
     "-fno-unwind-tables", "-fno-asynchronous-unwind-tables",
