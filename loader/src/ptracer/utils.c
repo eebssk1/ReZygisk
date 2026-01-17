@@ -390,21 +390,6 @@ void align_stack(struct user_regs_struct *regs, long preserve) {
   regs->REG_SP = (uintptr_t)((intptr_t)(regs->REG_SP - preserve) & ~0xf);
 }
 
-uintptr_t push_string(int pid, struct user_regs_struct *regs, const char *str) {
-  size_t len = strlen(str) + 1;
-
-  regs->REG_SP -= len;
-
-  align_stack(regs, 0);
-
-  uintptr_t addr = (uintptr_t)regs->REG_SP;
-  if (!write_proc(pid, addr, str, len)) LOGE("failed to write string %s", str);
-
-  LOGD("pushed string %" PRIxPTR, addr);
-
-  return addr;
-}
-
 uintptr_t remote_call(int pid, struct user_regs_struct *regs, uintptr_t func_addr, uintptr_t return_addr, long *args, size_t args_size) {
   align_stack(regs, 0);
 
@@ -425,7 +410,7 @@ uintptr_t remote_call(int pid, struct user_regs_struct *regs, uintptr_t func_add
       long remain = (args_size - 6L) * sizeof(long);
       align_stack(regs, remain);
 
-      if (!write_proc(pid, (uintptr_t) regs->REG_SP, args, remain)) LOGE("failed to push arguments");
+      if (!write_proc(pid, (uintptr_t) regs->REG_SP, &args[6], remain)) LOGE("failed to push arguments");
     }
 
     regs->REG_SP -= sizeof(long);
@@ -455,7 +440,7 @@ uintptr_t remote_call(int pid, struct user_regs_struct *regs, uintptr_t func_add
       long remain = (args_size - 8) * sizeof(long);
       align_stack(regs, remain);
 
-      write_proc(pid, (uintptr_t)regs->REG_SP, args, remain);
+      write_proc(pid, (uintptr_t)regs->REG_SP, &args[8], remain);
     }
 
     regs->regs[30] = return_addr;
@@ -469,7 +454,7 @@ uintptr_t remote_call(int pid, struct user_regs_struct *regs, uintptr_t func_add
       long remain = (args_size - 4) * sizeof(long);
       align_stack(regs, remain);
 
-      write_proc(pid, (uintptr_t)regs->REG_SP, args, remain);
+      write_proc(pid, (uintptr_t)regs->REG_SP, &args[4], remain);
     }
 
     regs->uregs[14] = return_addr;
