@@ -26,10 +26,8 @@ val ccachePath by lazy {
 }
 
 val defaultCFlags = arrayOf(
-    "-D_GNU_SOURCE",
-
-    "-Wall", "-Wextra",
-    "-fno-rtti", "-fno-exceptions",
+    "-D_GNU_SOURCE", "-Wall",
+    "-Wextra", "-fno-rtti", "-fno-exceptions",
     "-fno-stack-protector", "-fomit-frame-pointer",
     "-Wno-builtin-macro-redefined", "-D__FILE__=__FILE_NAME__"
 )
@@ -61,10 +59,7 @@ android {
 
     defaultConfig {
         externalNativeBuild.cmake {
-            arguments += "-DANDROID_STL=none"
-            arguments += "-DCMAKE_BUILD_PARALLEL_LEVEL=${Runtime.getRuntime().availableProcessors()}"
             cFlags("-std=c18", *defaultCFlags)
-            cppFlags("-std=c++20", *defaultCFlags)
             ccachePath?.let {
                 arguments += "-DNDK_CCACHE=$it"
             }
@@ -85,8 +80,4 @@ android {
             }
         }
     }
-}
-
-dependencies {
-    implementation("dev.rikka.ndk.thirdparty:cxx:1.2.0")
 }
