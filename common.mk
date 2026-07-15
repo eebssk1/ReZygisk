@@ -41,9 +41,11 @@ TARGET_x86_64 = x86_64-linux-android$(API_LEVEL)
 
 CC_ARCH = $(CC) --target=$(TARGET_$(ARCH)) --sysroot=$(SYSROOT)
 
-EXTRA_CFLAGS = -mllvm --enable-loopinterchange -mllvm --enable-partial-inlining \
+EXTRA_CFLAGS = -mllvm --polly -mllvm --polly-run-inliner  -mllvm --polly-invariant-load-hoisting -mllvm --polly-run-dce -mllvm --polly-vectorizer=stripmine \
+	-mllvm --enable-loopinterchange -mllvm --enable-partial-inlining \
+	-mllvm --enable-loop-flatten -mllvm --enable-jump-table-to-switch \
 	-mllvm --enable-dfa-jump-thread -mllvm --enable-knowledge-retention \
-	-mllvm --extra-vectorizer-passes
+	-mllvm --extra-vectorizer-passes -mllvm --hot-cold-split
 
 NDK_CFLAGS = -DANDROID -fdata-sections -ffunction-sections -funwind-tables \
 	-fstack-protector -no-canonical-prefixes -D_FORTIFY_SOURCE=1 \
