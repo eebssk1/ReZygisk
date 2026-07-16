@@ -14,11 +14,11 @@
  
  CFLAGS_BASE = -std=c99 -DANDROID -fPIC -Wno-int-conversion           \
 -	          -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Iinclude
-+	          -fstack-protector -D_FORTIFY_SOURCE=1 -Iinclude
++	          -fstack-protector -D_FORTIFY_SOURCE=1 -Iinclude 
  
  CFLAGS_debug = $(CFLAGS_BASE) -g -O0 -DCSOLOADER_DEBUG
 -CFLAGS_release = $(CFLAGS_BASE) -O3 -flto
-+CFLAGS_release = $(CFLAGS_BASE) -O3 -flto -funsafe-math-optimizations
++CFLAGS_release = $(CFLAGS_BASE) -O3 -flto -funsafe-math-optimizations -fdata-sections -ffunction-sections
  
  BUILD_TYPE ?= debug
  out ?= build/$(BUILD_TYPE)/$(ARCH)

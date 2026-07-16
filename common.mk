@@ -41,11 +41,31 @@ TARGET_x86_64 = x86_64-linux-android$(API_LEVEL)
 
 CC_ARCH = $(CC) --target=$(TARGET_$(ARCH)) --sysroot=$(SYSROOT)
 
-EXTRA_CFLAGS = -mllvm --polly -mllvm --polly-run-inliner  -mllvm --polly-invariant-load-hoisting -mllvm --polly-run-dce -mllvm --polly-vectorizer=stripmine \
-	-mllvm --enable-loopinterchange -mllvm --enable-partial-inlining \
-	-mllvm --enable-loop-flatten -mllvm --enable-jump-table-to-switch \
-	-mllvm --enable-dfa-jump-thread -mllvm --enable-knowledge-retention \
-	-mllvm --extra-vectorizer-passes -mllvm --hot-cold-split
+comma := ,
+empty :=
+space := $(empty) $(empty)
+
+EXTRA_LLVM_FLAGS := \
+    -mllvm:--polly \
+    -mllvm:--polly-run-inliner \
+    -mllvm:--polly-invariant-load-hoisting \
+    -mllvm:--polly-run-dce \
+    -mllvm:--polly-vectorizer=stripmine \
+    -mllvm:--enable-loopinterchange \
+    -mllvm:--enable-partial-inlining \
+    -mllvm:--disable-mr-partial-inlining \
+    -mllvm:--enable-loop-flatten \
+    -mllvm:--enable-jump-table-to-switch \
+    -mllvm:--enable-dfa-jump-thread \
+    -mllvm:--enable-knowledge-retention \
+    -mllvm:--extra-vectorizer-passes \
+    -mllvm:--hot-cold-split \
+    -mllvm:--regalloc-enable-advisor=release \
+    -mllvm:--enable-local-reassign=true \
+    -mllvm:--regalloc-eviction-max-interference-cutoff=20
+
+LLVM_COMPILE_OPTS := $(subst :,$(space),$(EXTRA_LLVM_FLAGS))
+LLVM_LINK_OPTS := $(foreach flag,$(EXTRA_LLVM_FLAGS),-Wl$(comma)$(subst :,$(comma),$(flag)))
 
 NDK_CFLAGS = -DANDROID -fdata-sections -ffunction-sections -funwind-tables \
 	-fstack-protector -no-canonical-prefixes -D_FORTIFY_SOURCE=1 \

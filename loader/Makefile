@@ -11,8 +11,8 @@ ZKSU_VERSION ?= $(VER_NAME)-$(VER_CODE)-$(COMMIT_HASH)-$(BUILD_TYPE)
 ifeq ($(BUILD_TYPE),release)
 	TYPE_CFLAGS = -O3 -ffast-math -flto -Wno-unused -Wno-unused-parameter       \
 				  -fvisibility=hidden -fvisibility-inlines-hidden -fno-unwind-tables \
-				  -fno-asynchronous-unwind-tables -DNDEBUG
-	TYPE_LDFLAGS = -Wl,--exclude-libs,ALL -Wl,--strip-all -flto
+				  -fno-asynchronous-unwind-tables -DNDEBUG $(LLVM_COMPILE_OPTS)
+	TYPE_LDFLAGS = -Wl,--exclude-libs,ALL -Wl,--strip-all -flto $(LLVM_LINK_OPTS)
 else
 	TYPE_CFLAGS = -g -O0
 	TYPE_LDFLAGS =
@@ -72,13 +72,13 @@ clean:
 $(PLTI_LIB):
 	@mkdir -p $(dir $@)
 	$(MAKE) -C $(PLTI_DIR) BUILD_TYPE=$(BUILD_TYPE) ARCH=$(ARCH) \
-		NDK_PATH=$(NDK_PATH) API_LEVEL=$(API_LEVEL) NDK_CFLAGS="$(EXTRA_CFLAGS)" \
+		NDK_PATH=$(NDK_PATH) API_LEVEL=$(API_LEVEL) NDK_CFLAGS="$(LLVM_COMPILE_OPTS)" \
 		out=$(BUILD_DIR)/obj/$(BUILD_TYPE)/plti/$(ARCH)
 
 $(CSOLOADER_LIB):
 	@mkdir -p $(dir $@)
 	$(MAKE) -C $(CSOLOADER_DIR) BUILD_TYPE=$(BUILD_TYPE) ARCH=$(ARCH) \
-		NDK_PATH=$(NDK_PATH) API_LEVEL=$(API_LEVEL) NDK_CFLAGS="$(EXTRA_CFLAGS)" \
+		NDK_PATH=$(NDK_PATH) API_LEVEL=$(API_LEVEL) NDK_CFLAGS="$(LLVM_COMPILE_OPTS)" \
 		out=$(BUILD_DIR)/obj/$(BUILD_TYPE)/csoloader/$(ARCH)
 
 $(OBJ_DIR)/common/%.o: src/common/%.c
