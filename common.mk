@@ -51,6 +51,8 @@ EXTRA_LLVM_FLAGS := \
     -mllvm:--polly-invariant-load-hoisting \
     -mllvm:--polly-run-dce \
     -mllvm:--polly-vectorizer=stripmine \
+    -mllvm:--polly-default-tile-size=16 \
+    -mllvm:--polly-register-tiling \
     -mllvm:--enable-loopinterchange \
     -mllvm:--enable-partial-inlining \
     -mllvm:--disable-mr-partial-inlining \
